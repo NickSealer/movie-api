@@ -15,14 +15,23 @@ class Api::V1::MoviesController < ApplicationController
     end
 
   def index
-    pp "================================="
-    pp Date.today.strftime("%Y/%m/%d")
-
-    @movies = Movie.all
+    @movies = Movie.all.order(:name)
     if !params[:day].nil? && params[:day].present?
-      @movies.MoviesService.search(@movies, params[:day])
+      @movies = MoviesService.search(@movies, params[:day])
     end
     render json: @movies, status: :ok
+  end
+
+  def available_movies
+    @movies = Movie.all
+    @availables = []
+
+    @movies.each do |movie|
+      if movie.reservations.count <= 10
+        @availables << movie
+      end
+    end
+    render json: @availables, status: :ok
   end
 
   def show
@@ -60,6 +69,6 @@ class Api::V1::MoviesController < ApplicationController
     end
 
     def movie_params
-      params.require(:movie).permit(:name, :description, :url, :presentation_day)
+      params.require(:movie).permit(:name, :description, :url, :presentation_day, :function_from, :function_to, :avatar)
     end
 end

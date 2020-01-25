@@ -15,11 +15,12 @@ class Api::V1::ReservationsController < ApplicationController
   end
 
   def index
-    @reservations = Reservation.all
+    @reservations = Reservation.movies
     render json: @reservations, status: :ok
   end
 
   def show
+    @reservation = Reservation.movie(@reservation)
     render json: @reservation, status: :ok
   end
 
@@ -54,6 +55,6 @@ class Api::V1::ReservationsController < ApplicationController
     end
 
     def reservation_params
-      params.require(:reservation).permit(:name, :email, :identification, :celphone, :movie_id)
+      params.require(:reservation).permit(:name, :lastname, :identification, :email, :celphone, :movie_id)
     end
 end
